@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Joguinho com socket io</title>
+</head>
+<body>
+    <main class="main">
+        <section class="terreno-game">
+            <div class="player" style="z-index: 1;"></div>
+        </section>
+        <p>Controle na setinhas!</p>
+    </main>
+
+    <script>
+        const socket = io()
+
+        const player = document.querySelector('.player')
+        let playerIdE = Math.floor(Math.random() * 500)
+        socket.on('player joined', (players) => {
+        let jogoTerreno = document.querySelector('.terreno-game')
+        let divs = document.getElementsByTagName('div')
+
+        let playerDiv = document.createElement('div')
+
+        playerDiv.classList = players
+
+        jogoTerreno.appendChild(playerDiv)
+        })
+
+
+        let playerPosLeft = 0
+        let playerPosBottom = 0
+
+        setInterval(() => {
+            player.style.left = playerPosLeft + 'px'
+            player.style.bottom = playerPosBottom + 'px'
+        }, 100)
+
+        window.addEventListener('keyup', (key) => {
+            switch(key.keyCode) {
+                case 37:
+                    if (playerPosLeft != 0) {
+                        playerPosLeft -= 20
+                        socket.emit('player MovimentL', {
+                            id: playerIdE,
+                            pos: playerPosLeft
+                        })
+                    }
+                    break
+
+                case 39: 
+                    if (playerPosLeft != 240) {
+                        playerPosLeft += 20
+                        socket.emit('player MovimentL', {
+                            id: playerIdE,
+                            pos: playerPosLeft
+                        })
+                    }
+                    break
+
+                case 38: 
+                    if (playerPosBottom != 200) {
+                        playerPosBottom += 20
+                        socket.emit('player MovimentT', {
+                            id: playerIdE,
+                            pos: playerPosBottom
+                        })
+                    }
+                    break
+
+                case 40:
+                    if (playerPosBottom != 0){
+                        playerPosBottom -= 20
+                        socket.emit('player MovimentT', {
+                            id: playerIdE,
+                            pos: playerPosBottom
+                        })
+                    }
+                    break
+            }
+        })
+
+        socket.on('player MovimentT', (pos) => {
+            let player2 = document.querySelector('.player2')
+            if (pos.id != playerIdE) {
+                player2.style.bottom = pos.pos + 'px'
+            }
+        })
+
+        socket.on('player MovimentL', (pos) => {
+            let player2 = document.querySelector('.player2')
+            if (pos.id != playerIdE) {
+                player2.style.left = pos.pos + 'px'
+            }
+        })
+    </script>
+
+    <style>
+        *{
+            margin: 0;
+            bottom: 0;
+        }
+
+        .main{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .player{
+            background-color: rgb(68, 68, 68);
+        }
+
+        .player2{
+            background-color: grey;
+        }
+
+        .terreno-game{
+            background-color: whitesmoke;
+            width: 260px;
+            height: 220px;
+            border: 2px solid rgb(211, 211, 211);
+            position: relative;
+        }
+
+        div{
+            background-color: grey;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</body>
+</html>
