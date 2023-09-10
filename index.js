@@ -13,13 +13,17 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     players += 1
-    socket.emit('player joined', 'player' + players)
-    console.log(players)
+
+    io.emit('player joined', {
+        playersQuantity: players
+    })
 
     socket.on('disconnect', () => {
         players -= 1
-        socket.emit('player joined', 'player' + players)
-        console.log(players)
+
+        io.emit('player disconnect', {
+            playersQuantity: players
+        })
     })
 })
 
@@ -39,6 +43,6 @@ io.on('connection', (socket) => {
 
 
 //Servidor
-    server.listen(80, () => {
+    server.listen(3000, () => {
         console.log('✅ - Servidor iniciado na porta 3000!')
     })

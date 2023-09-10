@@ -8,8 +8,12 @@
 </head>
 <body>
     <main class="main">
+        <section class="counter">
+            <p class="counter-item">0</p>
+        </section>
         <section class="terreno-game">
             <div class="player" style="z-index: 1;"></div>
+            <div class="player2"></div>
         </section>
         <p>Controle na setinhas!</p>
     </main>
@@ -18,16 +22,18 @@
         const socket = io()
 
         const player = document.querySelector('.player')
-        let playerIdE = Math.floor(Math.random() * 500)
+        let playerIdE = Math.random() * 500
+
         socket.on('player joined', (players) => {
-        let jogoTerreno = document.querySelector('.terreno-game')
-        let divs = document.getElementsByTagName('div')
+            let playerCounter = document.querySelector('.counter-item')
 
-        let playerDiv = document.createElement('div')
+            playerCounter.innerHTML = players.playersQuantity
+        })
 
-        playerDiv.classList = players
+        socket.on('player disconnect', (players) => {
+            let playerCounter = document.querySelector('.counter-item')
 
-        jogoTerreno.appendChild(playerDiv)
+            playerCounter.innerHTML = players.playersQuantity
         })
 
 
@@ -102,6 +108,7 @@
         *{
             margin: 0;
             bottom: 0;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         }
 
         .main{
@@ -118,6 +125,19 @@
 
         .player2{
             background-color: grey;
+        }
+
+        .counter{
+            background-color: rgba(238, 3, 3, 0.795);
+            padding: 10px;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600;
         }
 
         .terreno-game{
